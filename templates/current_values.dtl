@@ -1,0 +1,63 @@
+{% extends "scafolding.dtl" %}
+{% block content %}
+      <h3>Current Values</h3>
+      <hr/>
+      {% if topic_list %}
+      {% for row in topic_list %}
+      <div class="row">      
+      {% for c in row %}
+      <div class="col-xs-6">
+	<div class="row">
+	  <div class="col-xs-3 col-md-2">
+	    <a href="/topic/60/{{ c.topic_base58 }}">
+	      <i class="fa {{c.fa}}" aria-hidden="true" style="font-size:2em;"></i>
+	    </a>
+	  </div>
+	  <div class="col-md-6 hidden-sm-down">
+	    <span class="">{{ c.name }}</span>	    
+	  </div>
+	  <div class="col-xs-9 col-md-4">
+            <span id="{{ c.topic_base58 }}"></span>
+	    {{ c.unit }}
+          </div>
+	</div>
+      </div>
+      {% endfor %}
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="alert alert-warning" role="alert">
+         No subscriptions defined. Please set MQTT queue subscriptions on the configuration files
+         </div>
+      {% endif %}
+{% endblock %}
+{% block script %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+	var onopen= function(cn){
+	    return function(){
+		cn.send('init_current_values');
+	    };
+	};
+	var onmessage = function(e){
+	    var d = e.data.split(" ");
+	    var topic = d[0];
+	    $("#" + topic).text(d[2]);
+	};
+	function connect()
+	{
+            wsHost = "ws://" + window.location.host + "/ws";
+            websocket = new WebSocket(wsHost);
+            websocket.onmessage = onmessage;
+	    websocket.onopen = onopen(websocket);
+	};  
+	
+	if(!("WebSocket" in window)){  
+	    return 0;
+        } else {
+            connect();
+        };	
+
+  });
+  </script>
+  {% endblock %}

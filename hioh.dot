@@ -1,0 +1,42 @@
+digraph {
+        
+sensor1[shape="circle", label="Sensor 1"];
+sensor2[shape="circle", style=rounded];
+sensorn[shape="circle", label="Sensor n"];
+MQTT_broker[shape="box"];
+subgraph cluster1 {
+        label = "HIoH";
+        fontcolor="blue";
+        fontsize=16;
+        
+        ws_topic_subscriber
+        memory_acc[label="Latest Msg memory accumulator"];
+        file_acc[label="All Msg file accumulator"];
+        browser1;
+        browser2;
+        browserm[label="browser m"];
+        color=blue;
+}
+ 
+    sensor1 -> MQTT_broker[label="MQTT message 1" color="green" fontcolor="green"];
+    sensor2 -> MQTT_broker[label="MQTT message 2" color="green" fontcolor="green"];
+    sensorn -> MQTT_broker[label="MQTT message n" color="green" fontcolor="green"];
+
+    MQTT_broker ->ws_topic_subscriber[label="MQTT message 1 \nMQTT message 2 \nMQTT message n"color="green" fontcolor="green"];
+
+    subgraph cluster1 {
+            color=blue;
+            memory_acc;
+            file_acc;
+            browser1;
+            browser2;
+            browserm[label="browser m"];
+
+            }
+    ws_topic_subscriber-> memory_acc[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_topic_subscriber-> file_acc[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_topic_subscriber-> browser1[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_topic_subscriber-> browser2[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_topic_subscriber-> browserm[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+
+}

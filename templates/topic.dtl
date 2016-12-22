@@ -1,0 +1,169 @@
+{% extends "scafolding.dtl" %}
+{% block content %}
+    <h3>Topic {{ topic }}</h3>
+    <hr/>
+    <div class="row">
+	<div class="col-sm-4">
+	    {% if decreased_time_lapse %}
+    <a href="/topic/{{ decreased_time_lapse }}/{{ topic_base58 }}">
+    <i class="fa fa-minus" aria-hidden="true"></i>
+		Decrease time lapse
+	    </a>
+	    {% endif %}
+	</div>
+	<div class="offset-sm-4 col-sm-4">
+	    <a href="/topic/{{ increased_time_lapse }}/{{ topic_base58 }}">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+    Increase time lapse
+	    </a>
+	</div>
+    </div>
+    <div class="row">
+	<div class="col-sm-4">
+	    {{ humanized_time_lapse }} Maximun <strong id="max"></strong>
+        </div>
+    	<div class="col-sm-4">
+          Current
+          <strong id="{{ topic_base58 }}"></strong>
+	</div>
+	<div class="col-sm-4">
+	    {{ humanized_time_lapse }} Minimun <strong id="min"></strong>
+	</div>
+    </div>
+    <div class="row">
+	<div class="col-sm-12">
+	    <svg></svg>
+	</div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="/static/default/d3.v4.min.js" type="text/javascript" ></script>
+    <script type="text/javascript">
+     $(document).ready(function(){
+	 function getArrayWithLimitedLength(length) {
+	     var array = new Array();
+
+	     array.push = function () {
+		 if (this.length >= length) {
+		     this.shift();
+		 }
+		 return Array.prototype.push.apply(this,arguments);
+	     }
+	     return array;
+	 }
+
+	 var data = [];
+
+	 var margin = {top: 20, right: 20, bottom: 20, left: 40},
+	               width = 400  - margin.left - margin.right,
+	               height = 300 - margin.top - margin.bottom;
+	 var svg = d3.select("svg")
+	     .attr("width", width + margin.left + margin.right)
+	     .attr("height", height + margin.top + margin.bottom)
+	     .append("g")
+             .attr("transform", "translate(" + margin.left + ", " + margin.top + ")");
+
+	 var x = d3.scaleTime()
+                   .range([0, width]);
+
+         var y = d3.scaleLinear()
+                   .range([height, 0]);
+	 function loadDomain(dt){
+	     x.domain(d3.extent(dt, function(d) { return new Date(d.epoc);}));
+	     y.domain([0,d3.max(dt, function(d) { return d.value }) ]);
+	 };
+	 function draw(){
+	     loadDomain(data);
+	     var valueline = d3.line()
+			       .x(function(d) { return x(new Date(d.epoc)); })
+			       .y(function(d) { return y(d.value); });
+	     svg.append("path")
+		.attr("class", "line")
+		.attr("d", valueline(data));
+	     svg.append("g")
+		.attr("class", "axis axis--x")
+		.attr("transform", "translate(0, "+ height +")")
+		.call(d3.axisBottom(x).ticks(6));
+	     svg.append("g")
+		.attr("class", "axis axis--y")
+		.call(d3.axisLeft(y))
+	     
+	 }
+
+	 function redraw(){
+	     // define the line
+	     loadDomain(data);
+	     var valueline = d3.line()
+			       .x(function(d) { return x(new Date(d.epoc)); })
+			       .y(function(d) { return y(d.value); });
+	     
+	     var svg = d3.select("body").transition();
+	     svg.select(".line")   // change the line
+	        .duration(750)
+	        .attr("d", valueline(data));
+
+	     svg.selectAll("g.axis--x")
+	     	.call(d3.axisBottom(x).ticks(10));
+	     svg.selectAll("g.axis--y")
+	     	.call(d3.axisLeft(y).ticks(10));
+	 };
+	 var onopen= function(cn){
+	     return function(){
+		 cn.send('init_last_day');
+	     };
+	 };
+	 var onmessage = function(e){
+	     var l = e.data.split("\n");
+	     var init =false;
+	     if (data.length == 0){
+		 init = true;
+		 data = getArrayWithLimitedLength(l.length);
+	     };
+
+	     l.forEach(function(line){
+		 if (line.length > 0)
+		     {
+			 var d = line.split(" ");
+                         var topic = d[0];
+			 var epoc = d[1] * 1000;
+			 var value = parseFloat(d[2]);
+			 var current_max = parseFloat($("#max").text());
+			 var current_min = parseFloat($("#min").text());
+			 if (isNaN(current_max) || value > current_max){
+			     $("#max").text(value);
+			 };
+			 if ( isNaN(current_min) || value < current_min){
+			     $("#min").text(value);
+			 };
+			 var obj = {epoc: epoc, value: value};
+			 data.push(obj);
+                         $("#" + topic).text(value);
+		     };
+	     });
+	     
+	     if (init){
+		 draw();
+	     }
+	     else{
+		 redraw();	 
+	     };
+		 
+	   
+	 };
+	 function connect()
+	 {
+             wsHost = "ws://" + window.location.host + "/ws/topic/{{ time_lapse }}/{{ topic_base58 }}";
+             websocket = new WebSocket(wsHost);
+             websocket.onmessage = onmessage;
+	     websocket.onopen = onopen(websocket);
+	 };  
+
+	 if(!("WebSocket" in window)){  
+	     return 0;
+	 } else {
+             connect();
+	 };	
+     });
+    </script>
+{% endblock %}
