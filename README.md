@@ -1,6 +1,6 @@
 # HIoH (Home IoT Hub)
 
-HIoH is a Web accesible Hub for interacting with IoT device data and programmed in Erlang.
+HIoH is a Web accessible Hub for interacting with IoT device data and programmed in Erlang.
 
 ## Prerequisites
 
@@ -23,11 +23,11 @@ Modify the config/sys.config file:
  {sasl,[{errlog_type, error}]},
  {ws, [{topics, [[{topic,<<"/topic/to/subscribe2">>},
                   {fa,<<"fa-thermometer-quarter">>},
-                  {name,<<"Livingroom Temperature">>},
+                  {name,<<"Living-room Temperature">>},
                   {unit,<<"C">>}],
                  [{topic, <<"/topic/to/subscribe2">>}, 
                   {fa, <<"fa-umbrella">>}, 
-                  {name, <<"Livingroom humidity">>}, {unit, <<37>>}]
+                  {name, <<"Living-room humidity">>}, {unit, <<37>>}]
                   ]},
        {http_port, 4002},
        {mqtt_host, "localhost"},
@@ -50,17 +50,17 @@ make run
 
 ```
 
-Access the selected port via a modern browser and whatch the sensor data as its been received
+Access the selected port via a modern browser and watch the sensor data as its been received
 
 
 ## Goal
 
 The main objective is to have a hub completely independent of all the devices in which you can monitor it all.
-This indepence is bought at the expense of having a reliable protocol as a depencency. The MQTT protocol is believed to
-be an adecuate fit for IoT and thus it's the one this project relies upon.
+This independence is bought at the expense of having a reliable protocol as a dependency. The MQTT protocol is believed to
+be an adequate fit for IoT and thus it's the one this project relies upon.
 
 
-## Archtecture
+## Architecture
 
 As a picture is believed to be worth a thousand words...
  
@@ -69,9 +69,9 @@ As a picture is believed to be worth a thousand words...
 
 ## License
 
-HIoH souce code is [licensed under the MIT](LICENSE.md).
+HIoH source code is [licensed under the MIT](LICENSE.md).
 
 
 ## Copyright
 
-(c) 2016, Asier Azkuenaga Batiz(c)
+(c) 2016, Asier Azkuenaga Batiz
