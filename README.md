@@ -64,7 +64,7 @@ be an adecuate fit for IoT and thus it's the one this project relies upon.
 
 As a picture is believed to be worth a thousand words...
  
-![HIoH architecture image](hioh.png)
+![HIoH architecture image](https://raw.githubusercontent.com/azku/HIoH/master/hioh.png)
 
 
 ## License
