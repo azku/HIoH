@@ -28,15 +28,22 @@ subgraph cluster1 {
             color=blue;
             memory_acc;
             file_acc;
-            browser1;
-            browser2;
-            browserm[label="browser m"];
+            ws_handler1[label="Web socket handler 1"];
+            ws_handler2[label="Web socket handler 2"];
+            ws_handlerm[label="Web socket handler m"];
+            browser1[shape="tab"];
+            browser2[shape="tab"];
+            browserm[label="browser m" shape="tab"];
 
             }
     ws_topic_subscriber-> memory_acc[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
     ws_topic_subscriber-> file_acc[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
-    ws_topic_subscriber-> browser1[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
-    ws_topic_subscriber-> browser2[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
-    ws_topic_subscriber-> browserm[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_topic_subscriber-> ws_handler1[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_topic_subscriber-> ws_handler2[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_topic_subscriber-> ws_handlerm[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+
+    ws_handler1 -> browser1[label="Web socket message 1 \nWeb socket message 2 \nWeb socket message n"];
+    ws_handler2 -> browser2[label="Web socket message 1 \nWeb socket message 2 \nWeb socket message n"];
+    ws_handlerm -> browserm[label="Web socket message 1 \nWeb socket message 2 \nWeb socket message n"];
 
 }
