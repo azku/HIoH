@@ -10,7 +10,8 @@ dep_emqttc = git https://github.com/emqtt/emqttc
 CONFIG ?= config/sys.config
 
 EXTRA_CONFIG ?= config/extra.config
+
 all::
-       @if ! [ -a ${EXTRA_CONFIG} ]; then echo "[]." > ${EXTRA_CONFIG}; fi
+	@if ! [ -a ${EXTRA_CONFIG} ]; then echo "[]." > ${EXTRA_CONFIG}; fi
 
 include erlang.mk
