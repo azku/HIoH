@@ -32,6 +32,11 @@ websocket_info({publish, Topic, Data}, State=#{topic:=Topic}) ->
     TopicBase58 = base58:encode(Topic),
     Time = list_to_binary(integer_to_list(erlang:system_time(1))),
     {reply, {text, <<TopicBase58/binary, " ", Time/binary, " ",Data/binary>>},  State};
+websocket_info({publish, Topic, <<"cmd ", Data/binary>>}, State=#{topic:=all}) ->
+    TopicBase58 = base58:encode(Topic),
+    Time = list_to_binary(integer_to_list(erlang:system_time(1))),
+    CmdExecTime = humanised_interval(erlang:system_time(1), list_to_integer(binary_to_list(Data))),
+    {reply, {text, <<TopicBase58/binary, " ", Time/binary, " ",CmdExecTime/binary>>},  State};
 websocket_info({publish, Topic, Data}, State=#{topic:=all}) ->
     TopicBase58 = base58:encode(Topic),
     Time = list_to_binary(integer_to_list(erlang:system_time(1))),
@@ -44,3 +49,14 @@ websocket_info(_Info, State) ->
 terminate(_, _Req, #{event_handler:=EH}) ->
     gen_event:delete_handler(ws_event_manager, EH, leave_feed),
     ok.
+
+
+
+humanised_interval(Epoc1, Epoc0) when Epoc1 - Epoc0 < 60->
+    <<"Now">>;
+humanised_interval(Epoc1, Epoc0) when Epoc1 - Epoc0 < 60 * 60->
+    <<"Minutes_ago">>;
+humanised_interval(Epoc1, Epoc0) when Epoc1 - Epoc0 < 60 * 60 *24->
+    <<"Hours_ago">>;
+humanised_interval(_, _) ->
+    <<"Days_ago">>.

@@ -4,6 +4,7 @@
 
 %% API
 -export([start_link/0]).
+-export([publish/2]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -16,6 +17,8 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
+publish(Topic, Msg)->
+    gen_server:cast(?MODULE, {publish, Topic, Msg}).
 
 init([]) ->
     {ok, C} = emqttc:start_link([{host, ws_app:config(mqtt_host)}, {client_id, ws_app:config(mqtt_client_id)}, 
@@ -32,7 +35,9 @@ handle_call(_Request, _From, State) ->
     Reply = ok,
     {reply, Reply, State}.
 
-
+handle_cast({publish, Topic, Msg}, State=#{client:=C})->
+    emqttc:publish(C, Topic, Msg),
+    {noreply, State};
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
