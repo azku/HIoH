@@ -1,0 +1,9 @@
+{% extends "scafolding.dtl" %}
+{% block content %}
+      <h3>Confirm command</h3>
+      <hr/>
+      <form action="" method="post">
+        <input type="submit" value="Confirm" />
+      </form>
+      
+{% endblock %}
