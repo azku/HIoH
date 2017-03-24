@@ -11,7 +11,8 @@
 start(_Type, _Args) ->
     set_config(topics, ws_topic:encode_topics(config(topics))),
     Routes = [{'_', 
-               [{"/ws/[topic/:time_lapse/:topic]", ws_handler, #{}},
+               [{"/ws/image/:skip_event/:topic", ws_handler, #{}},
+                {"/ws/[topic/:time_lapse/:topic]", ws_handler, #{}},
                 {"/static/[...]", cowboy_static, {priv_dir, ws, "static/"}},
                 {"/[topic/:time_lapse/:topic]", ws_html_generation, []}
                ]}],

@@ -1,0 +1,5 @@
+Check image carousel potential bug
+Think about maximun limit of images in memory
+Think about tiding up the javascript code.
+Write documentation
+Think about initialization. Specifically if rabbitmq is not reachable.

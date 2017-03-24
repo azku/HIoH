@@ -8,12 +8,13 @@ terminate/2]).
 
 init(_ListOfTopic) ->
     %%Ensure file exists
-    LstIoDevice = lists:map(fun(E)->
-				    TopicBase58 = proplists:get_value(topic_base58, E),
-				    Dir = ws_app:data_directory(),
-				    {ok, IoDevice} = file:open(filename:join([Dir, TopicBase58]), [read, write, raw, binary]),
-				    {TopicBase58, IoDevice}
-			   end, ws_app:config(topics)),
+    LstIoDevice = 
+        lists:map(fun(E)->
+                          TopicBase58 = proplists:get_value(topic_base58, E),
+                          Dir = ws_app:data_directory(),
+                          {ok, IoDevice} = file:open(filename:join([Dir, TopicBase58]), [read, write, raw, binary]),
+                          {TopicBase58, IoDevice}
+                  end, ws_app:config(topics)),
     {ok, LstIoDevice}.
 
 handle_event({publish, Topic, Data}, LstIoDevice)->
@@ -27,7 +28,7 @@ handle_event({publish, Topic, Data}, LstIoDevice)->
 handle_event(_Event, State) ->
     {ok, State}.
  
-handle_call({{topic, Topic}}, LstIoDevice) ->
+handle_call({{topic, Topic = <<"/haws/measure">>}}, LstIoDevice) ->
     Bytes = ?N_ENTRIES * 20,
     TopicBase58 = base58:encode(Topic),
     IoDevice = proplists:get_value(TopicBase58, LstIoDevice),
@@ -46,6 +47,8 @@ handle_call({{topic, Topic}}, LstIoDevice) ->
                   []-> []
               end,
     {ok, LReturn , LstIoDevice};
+handle_call({{topic, _Topic }}, LstIoDevice) ->
+    {ok, [], LstIoDevice};
 handle_call(_, State) ->
     {ok, ok, State}.
  

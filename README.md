@@ -15,13 +15,37 @@ Get the project:
 ```
 git clone https://github.com/azku/HIoH
 cd HIoH
+
 ```
-Modify the config/sys.config file:
- 
+Compile
+
+```
+make run
+
+```
+
+Modify the configuration files config/sys.config and config/extra.config file:
+
+config/sys.config
 ```erlang
 [
  {sasl,[{errlog_type, error}]},
- {ws, [{topics, [[{topic,<<"/topic/to/subscribe2">>},
+ {ws, [
+       {http_port, 4002},
+       {mqtt_host, "localhost"},
+       {mqtt_client_id, <<"ws_mqtt_subscriber_client">>},
+       {mqtt_logger_level, info}
+      ]}
+].
+
+```
+
+config/extra.config
+
+```erlang
+
+[{ws,
+[{topics, [[{topic,<<"/topic/to/subscribe2">>},
                   {fa,<<"fa-thermometer-quarter">>},
                   {name,<<"Living-room Temperature">>},
                   {unit,<<"C">>}],
@@ -29,18 +53,13 @@ Modify the config/sys.config file:
                   {fa, <<"fa-umbrella">>}, 
                   {name, <<"Living-room humidity">>}, {unit, <<37>>}]
                   ]},
-       {http_port, 4002},
-       {mqtt_host, "localhost"},
-       {mqtt_client_id, <<"ws_mqtt_subscriber_client">>},
-       {mqtt_username, <<"mqtt_username">>},
-       {mqtt_password, <<"mqtt_password">>},
-       {mqtt_logger_level, info}
-      ]}
-].
-
+ {mqtt_username, <<"haws_user">>},
+ {mqtt_password, <<"haws_user">>}]}]
+ 
 ```
-
 Notice the MQTT username and password needed to connect to the broker, the http_port in which the web server is going to run and the list of topics to subscribe. HIoH would expect the sensor messages to queue up in these topics.
+
+Also note the use of two different config files. This technique is based on [this inaka article](http://inaka.net/blog/2015/07/14/erlang-config-include/).
 
 
 Run the OTP application:

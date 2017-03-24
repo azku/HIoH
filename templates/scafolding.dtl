@@ -37,5 +37,6 @@
   <script src="/static/default/jquery-3.1.1.min.js" type="text/javascript" ></script>
   <script src="/static/default/bootstrap-4.0.0-alpha.5-dist/js/tether.min.js" type="text/javascript"></script>
   <script src="/static/default/bootstrap-4.0.0-alpha.5-dist/js/bootstrap.min.js" type="text/javascript"></script>
+  <script src="/static/default/moment/moment.min.js" type="text/javascript"></script>
   {% block script %} {% endblock %}
 </html>

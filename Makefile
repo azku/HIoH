@@ -1,7 +1,7 @@
 PROJECT = ws
 PROJECT_DESCRIPTION = New project
 PROJECT_VERSION = 0.1.1
-LOCAL_DEPS=sasl
+LOCAL_DEPS=sasl runtime_tools
 DEPS = cowboy emqttc erlydtl
 dep_cowboy_commit = master
 dep_emqttc = git https://github.com/emqtt/emqttc

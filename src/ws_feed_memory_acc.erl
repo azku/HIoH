@@ -28,19 +28,21 @@ handle_event(_Event, State) ->
 handle_call({topic, Topic}, State)->
     case State of
 	#{Topic:={_Length, L}} -> {ok, L, State};
-	_ -> {ok, [], State}
+	_ -> {ok, State}
     end;
 handle_call(_, State) ->
     {ok, ok, State}.
  
 handle_info({reply_current_values, Pid}, State)->
-    lists:foreach(fun({Topic, {_, [{_ , Data} | _]}})->
-			  Pid ! {publish, Topic, Data};
+    lists:foreach(fun({Topic, {_, [{Time , Data} | _]}})->
+			  Pid ! {publish, Topic, Time, Data};
 		     (_)->  nothing
 		  end,maps:to_list(State)),
     {ok,  State};
 handle_info({{topic, Topic}, {last_minutes, X}, {pid, Pid}}, State) when is_binary(X)->
-    handle_info({{topic, Topic}, {last_minutes, list_to_integer(binary_to_list(X))}, {pid, Pid}}, State);
+    handle_info({{topic, Topic}, 
+                 {last_minutes, list_to_integer(binary_to_list(X))}, 
+                 {pid, Pid}}, State);
 handle_info({{topic, Topic}, {last_minutes, X}, {pid, Pid}}, State) when is_integer(X)->
     Time = erlang:system_time(1) - (60 * X),
     TopicBase58 = base58:encode(Topic),
@@ -56,7 +58,20 @@ handle_info({{topic, Topic}, {last_minutes, X}, {pid, Pid}}, State) when is_inte
 			   end, <<"">>, L2),
 	    Pid ! {accumulated, L3},
 	    {ok, State};
-	_ -> {ok, [], State}
+	_ -> {ok, State}
+    end;
+handle_info({{topic, Topic}, {skip_events, X}, {pid, Pid}}, State) when is_binary(X)->
+    handle_info({{topic, Topic}, 
+                 {skip_events, list_to_integer(binary_to_list(X))}, 
+                 {pid, Pid}}, State);
+handle_info({{topic, Topic}, {skip_events, X}, {pid, Pid}}, State) when is_integer(X)->
+    Nth = X +1,
+    case State of
+        #{Topic := {Length, L}} when Nth=<Length , Nth>=0-> 
+            {T, D} = lists:nth(Nth, L),
+            Pid ! {skip_events, {list_to_binary(integer_to_list(T)), D}},
+            {ok, State};
+        _ -> {ok, State}
     end;
 handle_info(_Msg, State) ->
     {ok, State}.

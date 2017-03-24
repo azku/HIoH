@@ -1,16 +1,16 @@
 {% extends "scafolding.dtl" %}
 {% block content %}
-      <h3>Current Values</h3>
+      <h3>Current Measurements</h3>
       <hr/>
-      {% if topic_list %}
-      {% for row in topic_list %}
+      {% if measure_list %}
+      {% for row in measure_list %}
       <div class="row">      
       {% for c in row %}
       <div class="col-xs-6">
 	<div class="row">
 	  <div class="col-xs-3 col-md-2">
 	    <a href="/topic/60/{{ c.topic_base58 }}">
-	      <i class="fa {{c.fa}}" aria-hidden="true" style="font-size:2em;"></i>
+ 	      <i class="fa {{c.fa}}" aria-hidden="true" style="font-size:2em;"></i>
 	    </a>
 	  </div>
 	  <div class="col-md-6 hidden-sm-down">
@@ -32,10 +32,38 @@
       {% endif %}
 
 <br>
+      <h3>Images</h3>
+      <hr/>
+      {% if image_list %}
+      {% for row in image_list %}
+      <div class="row">      
+      {% for c in row %}
+      <div class="col-xs-6">
+	<div class="row">
+	  <div class="col-xs-3 col-md-2">
+	    <a href="/topic/image/{{ c.topic_base58 }}">
+	      <i class="fa {{c.fa}}" aria-hidden="true" style="font-size:2em;"></i>
+	    </a>
+	  </div>
+	  <div class="col-md-6 hidden-sm-down">
+    <span class="">{{ c.name }}</span>
+	  </div>
+    <div class="col-xs-9 col-md-4">
+    <span id="{{ c.topic_base58 }}"></span>
+        <canvas id="canvas{{ c.topic_base58 }}"></canvas>
+          </div>
+	</div>
+      </div>
+      {% endfor %}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+<br>
       <h3>Actions</h3>
       <hr/>
-      {% if command_list %}
-      {% for row in command_list %}
+      {% if cmd_list %}
+      {% for row in cmd_list %}
       <div class="row">      
       {% for c in row %}
       <div class="col-xs-6">
@@ -59,35 +87,67 @@
       {% endfor %}
       {% endif %}
 
+
       
 {% endblock %}
 {% block script %}
-  <script type="text/javascript">
-    $(document).ready(function(){
-	var onopen= function(cn){
-	    return function(){
-		cn.send('init_current_values');
-	    };
-	};
-	var onmessage = function(e){
-	    var d = e.data.split(" ");
-	    var topic = d[0];
-	    $("#" + topic).text(d[2]);
-	};
-	function connect()
-	{
-            wsHost = "ws://" + window.location.host + "/ws";
-            websocket = new WebSocket(wsHost);
-            websocket.onmessage = onmessage;
-	    websocket.onopen = onopen(websocket);
-	};  
-	
-	if(!("WebSocket" in window)){  
-	    return 0;
-        } else {
-            connect();
-        };	
+    <script type="text/javascript">
 
-  });
-  </script>
+     $(document).ready(function(){
+         var previousMsg = "";
+         var idInterval;
+	 var onopen= function(cn){
+	     return function(){
+		 cn.send('init_current_values');
+	     };
+	 };
+         var onmessage = function(e){
+             if (previousMsg.length == 0){
+                 var d = e.data.split(" ");
+	         var topic = d[0];
+                 if(d[2] == "image"){
+                     $("#" + topic).text(moment().to(moment.unix(d[1])));
+                     window.clearInterval(idInterval);
+                     idInterval = setInterval(function(){$("#" + topic).text(moment().to(moment.unix(d[1])))}, 1000);
+                     previousMsg=e.data;
+                 }
+	         else{$("#" + topic).text(d[2])};
+             }
+             else{
+                 var d = previousMsg.split(" ");
+                 var blob = new Blob([e.data],{type: "image/png"});
+                 var c=document.getElementById("canvas" + d[0]);
+                 var ctx=c.getContext("2d");
+                 var img = new Image();
+                 img.onload = function (e) {
+                     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, c.width, c.height);
+                     window.URL.revokeObjectURL(img.src);    
+                     img = null;  
+                 };
+
+                 img.onerror = img.onabort = function () {         
+                     img = null;
+                 };
+                 img.src = window.URL.createObjectURL(blob); 
+                 previousMsg="";
+             }
+	     
+	 };
+	 function connect()
+	 {
+             wsHost = "ws://" + window.location.host + "/ws";
+             websocket = new WebSocket(wsHost);
+             websocket.binaryType = "arraybuffer"; 
+             websocket.onmessage = onmessage;
+	     websocket.onopen = onopen(websocket);
+	 };  
+	 
+	 if(!("WebSocket" in window)){  
+	     return 0;
+         } else {
+             connect();
+         };	
+
+     });
+    </script>
   {% endblock %}

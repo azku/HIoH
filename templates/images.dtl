@@ -1,0 +1,95 @@
+{% extends "scafolding.dtl" %}
+{% block content %}
+
+<br>
+<h3>Images</h3>
+<hr/>
+
+<div class="row">
+  <div class="col-xs-12" >
+    <nav aria-label="Page navigation example">
+      <ul class="pagination pagination-lg">
+        <li class="page-item"><a id="a_previous" class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a id="a_next" class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
+
+  <figure class="figure">
+    <canvas id="canvas" class="figure-img img-fluid rounded" alt="A generic square placeholder image with rounded corners in a figure."></canvas>
+    <figcaption id="caption" class="figure-caption"></figcaption>
+  </figure>
+  </div>
+</div>
+      
+            
+{% endblock %}
+{% block script %}
+    <script type="text/javascript">
+
+     $(document).ready(function(){
+         var previousMsg = "";
+         var skip = 0;
+         var interval;
+
+	 var onopen= function(cn){
+	     return function(){
+		 cn.send('skip_events 0');
+	     };
+	 };
+         
+	 var onmessage = function(e){
+             if(previousMsg.length == 0){
+                 var d = e.data.split(" ");
+	         var topic = d[0];
+                 $("#" + "caption").text(moment().to(moment.unix(d[1])));
+                 window.clearInterval(interval);
+                 interval = setInterval(function(){$("#" + "caption").text(moment().to(moment.unix(d[1])))}, 60 * 1000);
+                 previousMsg = e.data;
+             }
+             else{
+                 var d = previousMsg.split(" ");
+                 var blob = new Blob([e.data],{type: "image/png"});
+                 var c=document.getElementById("canvas");
+                 var ctx=c.getContext("2d");
+                 var img = new Image();
+                 img.onload = function (e) {
+                     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, c.width, c.height);
+                     window.URL.revokeObjectURL(img.src);    
+                     img = null;  
+                 };
+
+                 img.onerror = img.onabort = function () {         
+                     img = null;
+                 };
+                 img.src = window.URL.createObjectURL(blob); 
+                 previousMsg="";
+
+             }
+	 };
+	 function connect()
+	 {
+             wsHost = "ws://" + window.location.host + "/ws/image/{{ skip_events }}/{{ topic }}";
+             websocket = new WebSocket(wsHost);
+             websocket.binaryType = "arraybuffer"; 
+             websocket.onmessage = onmessage;
+	     websocket.onopen = onopen(websocket);
+             $('#a_next').click(function(e){
+                 skip = skip +1;
+                 websocket.send('skip_events ' + skip.toString());
+             });
+             $('#a_previous').click(function(e){
+                 skip = skip  -1;
+                 websocket.send('skip_events ' + skip.toString());
+             });
+             
+	 };  
+	 
+	 if(!("WebSocket" in window)){  
+	     return 0;
+         } else {
+             connect();
+         };	
+
+     });
+    </script>
+  {% endblock %}
