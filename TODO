@@ -1,4 +1,5 @@
-Check image carousel potential bug
+Image carousel, convenient to have top image pool limit
+hot reload of configuration changes
 Think about maximun limit of images in memory
 Think about tiding up the javascript code.
 Write documentation

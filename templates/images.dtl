@@ -74,11 +74,12 @@
              websocket.onmessage = onmessage;
 	     websocket.onopen = onopen(websocket);
              $('#a_next').click(function(e){
+                 //skip = (skip == {{ image_pool_limit }}}}) ? 0: skip -1;
                  skip = skip +1;
                  websocket.send('skip_events ' + skip.toString());
              });
              $('#a_previous').click(function(e){
-                 skip = skip  -1;
+                 skip = (skip == 0) ? 0: skip -1;
                  websocket.send('skip_events ' + skip.toString());
              });
              

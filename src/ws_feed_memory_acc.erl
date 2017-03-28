@@ -67,7 +67,7 @@ handle_info({{topic, Topic}, {skip_events, X}, {pid, Pid}}, State) when is_binar
 handle_info({{topic, Topic}, {skip_events, X}, {pid, Pid}}, State) when is_integer(X)->
     Nth = X +1,
     case State of
-        #{Topic := {Length, L}} when Nth=<Length , Nth>=0-> 
+        #{Topic := {Length, L}} when Nth=<Length , Nth>0-> 
             {T, D} = lists:nth(Nth, L),
             Pid ! {skip_events, {list_to_binary(integer_to_list(T)), D}},
             {ok, State};
