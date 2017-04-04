@@ -35,9 +35,9 @@ init(Req,State) ->
     {LMeasure, LImage, LCmd} = 
         lists:foldl(fun(SL, {M, I, C})->
                             case proplists:get_value(topic, SL)of
-                                <<"/haws/measure", _/binary>> -> {[SL|M], I, C};
-                                <<"/haws/image", _/binary>> -> {M, [SL|I], C};
-                                <<"/haws/cmd", _/binary>> -> {M, I, [SL|C]}
+                                <<"/HIoH/measure", _/binary>> -> {[SL|M], I, C};
+                                <<"/HIoH/image", _/binary>> -> {M, [SL|I], C};
+                                <<"/HIoH/cmd", _/binary>> -> {M, I, [SL|C]}
                             end
                     end, {[],[],[]}, ws_app:config(topics)),
     {ok, Resp} = current_values_dtl:render([{measure_list, two_column_list(LMeasure)}, 

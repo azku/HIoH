@@ -42,7 +42,7 @@ websocket_info({publish, Topic, _Time, Data}, State=#{topic:=Topic}) ->
     TopicBase58 = base58:encode(Topic),
     Time = list_to_binary(integer_to_list(erlang:system_time(1))),
     {reply, {text, <<TopicBase58/binary, " ", Time/binary, " ",Data/binary>>},  State};
-websocket_info({publish, Topic = <<"/haws/image", _/binary>>, Time0, Data}, State=#{topic:=all}) ->
+websocket_info({publish, Topic = <<"/HIoH/image", _/binary>>, Time0, Data}, State=#{topic:=all}) ->
     TopicBase58 = base58:encode(Topic),
     Time = list_to_binary(integer_to_list(Time0)),
     {reply, [{text, <<TopicBase58/binary, " ", Time/binary, " image" >> }, 
@@ -52,7 +52,7 @@ websocket_info({publish, Topic, _Time, <<"cmd ", Data/binary>>}, State=#{topic:=
     Time = list_to_binary(integer_to_list(erlang:system_time(1))),
     CmdExecTime = humanised_interval(erlang:system_time(1), list_to_integer(binary_to_list(Data))),
     {reply, {text, <<TopicBase58/binary, " ", Time/binary, " ",CmdExecTime/binary>>},  State};
-websocket_info({publish, <<"/haws/image", _/binary>>, _Time, _Image}, State=#{topic:=Topic}) ->
+websocket_info({publish, <<"/HIoH/image", _/binary>>, _Time, _Image}, State=#{topic:=Topic}) ->
     TopicBase58 = base58:encode(Topic),
     Time = list_to_binary(integer_to_list(erlang:system_time(1))),
     {reply, {text, <<TopicBase58/binary, " ", Time/binary>>}, State};

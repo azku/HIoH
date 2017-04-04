@@ -28,7 +28,7 @@ handle_event({publish, Topic, Data}, LstIoDevice)->
 handle_event(_Event, State) ->
     {ok, State}.
  
-handle_call({{topic, Topic = <<"/haws/measure">>}}, LstIoDevice) ->
+handle_call({{topic, Topic = <<"/HIoH/measure">>}}, LstIoDevice) ->
     Bytes = ?N_ENTRIES * 20,
     TopicBase58 = base58:encode(Topic),
     IoDevice = proplists:get_value(TopicBase58, LstIoDevice),

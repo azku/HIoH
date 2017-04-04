@@ -5,10 +5,10 @@ HIoH is a Web accessible Hub for interacting with IoT device data and programmed
 ## Prerequisites
 
 Erlang > V17
-An MQTT broker receiving sensor raw values
+An MQTT broker ready to receive raw values on different topics
 
 
-## Installation
+## Installing
 
 Get the project:
 
@@ -20,11 +20,14 @@ cd HIoH
 Compile
 
 ```
-make run
+make
 
 ```
 
-Modify the configuration files config/sys.config and config/extra.config file:
+## Configuration
+
+We need to configure how to connect to the MQTT broker and which topics are going to be subscribed by HIoH. 
+This could achieved by modifying the configuration files config/sys.config and config/extra.config file:
 
 config/sys.config
 ```erlang
@@ -45,14 +48,19 @@ config/extra.config
 ```erlang
 
 [{ws,
-[{topics, [[{topic,<<"/topic/to/subscribe2">>},
-                  {fa,<<"fa-thermometer-quarter">>},
-                  {name,<<"Living-room Temperature">>},
-                  {unit,<<"C">>}],
-                 [{topic, <<"/topic/to/subscribe2">>}, 
-                  {fa, <<"fa-umbrella">>}, 
-                  {name, <<"Living-room humidity">>}, {unit, <<37>>}]
-                  ]},
+[{topics, [[{topic,<<"/HIoH/measure/livingroom/temperature">>},
+                {fa,<<"fa-thermometer-quarter">>},
+                {name,<<"Livingroom Temperature">>},
+                {unit,<<"C">>}],
+               [{topic, <<"/HIoH/measure/livingroom/humidity">>}, 
+                {fa, <<"fa-umbrella">>}, 
+                {name, <<"Livingroom humidity">>}, {unit, <<37>>}],
+               [{topic, <<"/HIoH/measure/all/power">>}, {fa, <<"fa-envira">>}, 
+                {name, <<"Power consumption">>}, {unit, <<"Wh">>}],
+               [{topic, <<"/HIoH/image/outside/camera">>}, {fa, <<"fa-video-camera">>}, 
+                {name, <<"Outside Camera">>}, {unit, <<"">>}],
+               [{topic, <<"/HIoH/cmd/livingroom/restart_pi">>}, {fa, <<"fa-power-off">>}, 
+                {name, <<"Restart RPi">>}, {unit, <<"">>}]]},
  {mqtt_username, <<"haws_user">>},
  {mqtt_password, <<"haws_user">>}]}]
  
@@ -61,20 +69,48 @@ Notice the MQTT username and password needed to connect to the broker, the http_
 
 Also note the use of two different config files. This technique is based on [this inaka article](http://inaka.net/blog/2015/07/14/erlang-config-include/).
 
+### A word on topics
+Topics are easy to set up but there is a convention on how to do it:
 
-Run the OTP application:
+#### Composition of the name
+
+1. The first part, is the name of the application */HIoH* 
+
+2. Then a value indicating a reception of a */measure* (such as temperature),
+   a reception of a */image* blob or a sending of a */cmd* command.
+
+3. Physical location of the sender (in case of measure or image) or receiver (in case of cmd)
+
+4. Type of data (temperature, humidity,...)
+
+#### The Icon
+
+HIoH uses [Font Awesome](http://fontawesome.io/icons/) icons. Each topic it's assigned an icon and is configured by using it's awesome icon's name.
+
+#### Unit
+
+In case of a measure topic, The unit can be specified.
+
+#### Name
+
+The title of the topic. In other words, the displayed name for the topic.
+
+
+
+
+Ones the configuration is finished, run the OTP application:
 
 ```
 make run
 
 ```
 
-Access the selected port via a modern browser and watch the sensor data as its been received
+Access the selected port via a modern browser and the IoT Hub its up!
 
 
 ## Goal
 
-The main objective is to have a hub completely independent of all the devices in which you can monitor it all.
+The main objective is to have a hub completely independent of all the devices, where you can monitor everything and send commands everywhere.
 This independence is bought at the expense of having a reliable protocol as a dependency. The MQTT protocol is believed to
 be an adequate fit for IoT and thus it's the one this project relies upon.
 

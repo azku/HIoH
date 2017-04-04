@@ -21,8 +21,12 @@ subgraph cluster1 {
     sensor1 -> MQTT_broker[label="MQTT message 1" color="green" fontcolor="green"];
     sensor2 -> MQTT_broker[label="MQTT message 2" color="green" fontcolor="green"];
     sensorn -> MQTT_broker[label="MQTT message n" color="green" fontcolor="green"];
+    MQTT_broker -> receiver[label="MQTT message (cmd) n" color="green" fontcolor="green"];
+    
 
     MQTT_broker ->ws_topic_subscriber[label="MQTT message 1 \nMQTT message 2 \nMQTT message n"color="green" fontcolor="green"];
+    ws_topic_subscriber -> MQTT_broker[label="MQTT message (cmd) n"color="green" fontcolor="green"];
+    
 
     subgraph cluster1 {
             color=blue;
@@ -39,11 +43,11 @@ subgraph cluster1 {
     ws_topic_subscriber-> memory_acc[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
     ws_topic_subscriber-> file_acc[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
     ws_topic_subscriber-> ws_handler1[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
-    ws_topic_subscriber-> ws_handler2[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
+    ws_handler2-> ws_topic_subscriber[label="Erlang message (cmd) n"];
     ws_topic_subscriber-> ws_handlerm[label="Erlang message 1 \nErlang message 2 \nErlang message n"];
 
     ws_handler1 -> browser1[label="Web socket message 1 \nWeb socket message 2 \nWeb socket message n"];
-    ws_handler2 -> browser2[label="Web socket message 1 \nWeb socket message 2 \nWeb socket message n"];
+    browser2 -> ws_handler2[label="Web socket message (cmd) n"];
     ws_handlerm -> browserm[label="Web socket message 1 \nWeb socket message 2 \nWeb socket message n"];
 
 }

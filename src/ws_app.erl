@@ -6,7 +6,8 @@
 -export([config/1, data_directory/0]).
 
 -define(APP, ws).
--define(N_ENTRIES, 15000).
+-define(N_ENTRIES_MEASURE, 15000).
+-define(N_ENTRIES_IMG, 5).
 
 start(_Type, _Args) ->
     set_config(topics, ws_topic:encode_topics(config(topics))),
@@ -27,7 +28,8 @@ stop(_State) ->
 
 config(Key) when is_atom(Key)->
     case application:get_env(?APP, Key) of
-        undefined when Key==number_of_entries -> ?N_ENTRIES;
+        undefined when Key==number_of_entries_measure -> ?N_ENTRIES_MEASURE;
+        undefined when Key==number_of_entries_img -> ?N_ENTRIES_IMG;
         undefined -> erlang:error({missing_config_pair, Key});
         {ok, Val} -> Val
     end.
