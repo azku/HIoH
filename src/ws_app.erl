@@ -18,6 +18,13 @@ start(_Type, _Args) ->
                 {"/[topic/:time_lapse/:topic]", ws_html_generation, []}
                ]}],
     Dispatch = cowboy_router:compile(Routes),
+    %% TODO: Add https support in order to use HTTP2
+    %% {ok, _} = cowboy:start_tls(https, 100, [
+    %%                                         {port, config(http_port)},
+    %%                                         {cacertfile, "ca.cert.pem"},
+    %%                                         {certfile,  "localhost.cert.pem"},
+    %%                                         {keyfile,  "localhost.key.pem"}
+    %%                                        ], #{env => #{dispatch => Dispatch}}),
     {ok, _} = cowboy:start_clear(haws_http_server, 100, [{port, config(http_port)}],
         			 #{env=> #{dispatch=> Dispatch}}),
     ws_sup:start_link().

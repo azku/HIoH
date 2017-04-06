@@ -17,6 +17,9 @@ init(_ListOfTopic) ->
                   end, ws_app:config(topics)),
     {ok, LstIoDevice}.
 
+handle_event({publish,  <<"/HIoH/image", _/binary>>, _Data}, LstIoDevice)->
+    %%TODO: think about how to store images and everything in general
+    {ok, LstIoDevice};
 handle_event({publish, Topic, Data}, LstIoDevice)->
     %% Cotinuous limited stream
     Time = list_to_binary(integer_to_list(erlang:system_time(1))),
@@ -28,7 +31,7 @@ handle_event({publish, Topic, Data}, LstIoDevice)->
 handle_event(_Event, State) ->
     {ok, State}.
  
-handle_call({{topic, Topic = <<"/HIoH/measure">>}}, LstIoDevice) ->
+handle_call({{topic, Topic = <<"/HIoH/measure", _/binary>>}}, LstIoDevice) ->
     Bytes = ?N_ENTRIES * 20,
     TopicBase58 = base58:encode(Topic),
     IoDevice = proplists:get_value(TopicBase58, LstIoDevice),

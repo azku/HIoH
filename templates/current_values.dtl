@@ -108,7 +108,7 @@
                  if(d[2] == "image"){
                      $("#" + topic).text(moment().to(moment.unix(d[1])));
                      window.clearInterval(idInterval);
-                     idInterval = setInterval(function(){$("#" + topic).text(moment().to(moment.unix(d[1])))}, 1000);
+                     idInterval = setInterval(function(){$("#" + topic).text(moment().to(moment.unix(d[1])))}, 30000);
                      previousMsg=e.data;
                  }
 	         else{$("#" + topic).text(d[2])};
@@ -150,4 +150,4 @@
 
      });
     </script>
-  {% endblock %}
+{% endblock %}

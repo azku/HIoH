@@ -1,0 +1,41 @@
+HIoH (HIoH IoT Hub)
+
+The internet of things it's a trendy topic lately. Armed with a myriad different little devices from temperature sensors to door bells, from elaborate sleep monitoring sensor, to  cameras, weather stations, TV boxes or credit card sized computers, there is a ample world to explore.
+<br/><br/>
+
+How to bring together all this information that's been generated? meet HIoH IoT Hub. HIoH makes one assumption: Communication is going to be using MQTT protocol. This protocol is been battle tested and thought for machine to machine communication.
+<br/><br/>
+
+The project focuses on connecting to a MQTT broker and singing up to some configurable topics. Each topic is supposed to be a device. Every device will send data to the broker, and ones configured, HIoT will bring it all together. There is also the possibility for the communication to be from HIoT to device, opening a way to send commands.
+<br/>
+
+<h5>Other than HIoH, what else do I need to have it all play as one?</h5>
+<ul>
+    <li>An MQTT broker. It can be any broker that implements MQTT. If asked for suggestions, in the land on Erlang, there is Rabbitmq where MQTT can be installed as a module.</li>
+    <li>Each device has to be able to send or receive (or both) MQTT messages to the or from the broker. Many programming languages have libraries to connect to MQTT brokers so I believe having this protocol it's actually a feature in this regard.</li>
+</ul>
+
+<h5>Where does it all merge?</h5>
+
+HIoH is accessible via browser and it's programmed to work on mobile phones. It makes a heavy usage of web sockets in order to maintain updated data.
+
+<h5>Plots?</h5>
+
+HIoH uses d3 for real-time graphics. Watch the graph update as data arrives!
+
+<h5>Images?</h5>
+
+HIoH can receive and display png images. Monitor movement
+
+<h5>How is it programmed?</h5>
+
+HIoH it's programmed on Erlang. In case you were wondering how could a system connect to multiple topics,  get all the data, relay it to the web clients (and possibly back) on real time and not fall to pieces.
+
+<h5>Is there anything hidden?</h5>
+
+MQTT protocol it's designed for speed not for security. IoT has an incredible potential but this goes in par with the security risks it brings. This should not be a problem but it definitely has to be taken into account.
+
+HIoH does not build any security layer as I believe it is not its job. It simple offers a hub that it works
+
+<h5>Want to know more?</h5>
+HIoH is built under the MIT license and can be found <a href="https://github.com/azku/HIoH" alt="link to HIoH site">here</a>.
