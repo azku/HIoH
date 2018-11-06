@@ -4,7 +4,7 @@
 -export([init/1, handle_event/2, handle_call/2, handle_info/2, code_change/3,
 terminate/2]).
  
--define(N_ENTRIES, ws_app:config(number_of_entries)).
+-define(N_ENTRIES, ws_app:config(number_of_entries_measure)).
 
 init(_ListOfTopic) ->
     %%Ensure file exists

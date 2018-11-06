@@ -25,7 +25,7 @@ start(_Type, _Args) ->
     %%                                         {certfile,  "localhost.cert.pem"},
     %%                                         {keyfile,  "localhost.key.pem"}
     %%                                        ], #{env => #{dispatch => Dispatch}}),
-    {ok, _} = cowboy:start_clear(haws_http_server, 100, [{port, config(http_port)}],
+    {ok, _} = cowboy:start_clear(haws_http_server,  [{port, config(http_port)}],
         			 #{env=> #{dispatch=> Dispatch}}),
     ws_sup:start_link().
 

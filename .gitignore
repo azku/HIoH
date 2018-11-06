@@ -1,0 +1,7 @@
+extra.config
+deps
+rel
+ebin
+.erlang.mk
+_rel
+ws.d
