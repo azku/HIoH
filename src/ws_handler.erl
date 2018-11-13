@@ -41,6 +41,7 @@ websocket_info({publish, Topic, Data}, State) ->
 websocket_info({publish, Topic, _Time, Data}, State=#{topic:=Topic}) ->
     TopicBase58 = base58:encode(Topic),
     Time = list_to_binary(integer_to_list(erlang:system_time(1))),
+    io:format("sending ~p on topic ~p~n",[Data, Topic]),
     {reply, {text, <<TopicBase58/binary, " ", Time/binary, " ",Data/binary>>},  State};
 websocket_info({publish, Topic = <<"/HIoH/image", _/binary>>, Time0, Data}, State=#{topic:=all}) ->
     TopicBase58 = base58:encode(Topic),

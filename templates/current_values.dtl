@@ -140,6 +140,9 @@
              websocket.binaryType = "arraybuffer"; 
              websocket.onmessage = onmessage;
 	     websocket.onopen = onopen(websocket);
+	     websocket.onclose = function(){
+	              setTimeout(connect, 1000);
+		      };
 	 };  
 	 
 	 if(!("WebSocket" in window)){  
